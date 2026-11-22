@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 12mm 14mm; }
+  body {
+    font-family: "Liberation Sans", "DejaVu Sans", Arial, sans-serif;
+    color: #18181b;
+    font-size: 8.8pt;
+    line-height: 1.36;
+    margin: 0;
+  }
+  .banner {
+    border: 1.5px solid #18181b;
+    background: #fafafa;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+  }
+  .banner-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  h1 { margin: 0; font-size: 16.5pt; letter-spacing: -0.3px; }
+  .pill {
+    background: #ea580c;
+    color: #ffffff;
+    font-size: 7.4pt;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .target { font-size: 8.8pt; font-weight: 700; color: #9a3412; margin: 3px 0 5px 0; }
+  .contacts { font-size: 7.7pt; color: #3f3f46; }
+
+  .sec-title {
+    font-size: 8.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #18181b;
+    border-bottom: 2px solid #ea580c;
+    padding-bottom: 2px;
+    margin: 9px 0 6px 0;
+  }
+  .row-tbl {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-bottom: 5px;
+    page-break-inside: avoid;
+  }
+  .col-date {
+    width: 94px;
+    vertical-align: top;
+    padding-right: 10px;
+    font-size: 7.8pt;
+    font-weight: 700;
+    color: #ea580c;
+  }
+  .col-body {
+    vertical-align: top;
+    padding-left: 10px;
+    border-left: 1.5px solid #e4e4e7;
+  }
+  .title { font-weight: 700; }
+  .org { color: #52525b; font-weight: 400; }
+  .summary { margin-top: 1.5px; color: #27272a; }
+  ul { margin: 2px 0 0 0; padding-left: 14px; }
+  li { margin-bottom: 1px; }
+  .note { font-size: 7.6pt; color: #71717a; font-style: italic; margin-top: 3px; }
+
+  .skill-tbl {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-top: 2px;
+  }
+  .skill-tbl td {
+    padding: 2.5px 4px;
+    vertical-align: top;
+    font-size: 8.2pt;
+    border-bottom: 1px dotted #e4e4e7;
+  }
+  .skill-key {
+    width: 185px;
+    font-weight: 700;
+    color: #9a3412;
+  }
+</style>
+</head>
+<body>
+  <div class="banner">
+    <div class="banner-top">
+      <h1>{{NAME}}</h1>
+      <span class="pill">Media · Interactive · Comms</span>
+    </div>
+    <div class="target">{{TARGET_ROLE}}</div>
+    <div class="contacts">
+      {{LOCATION}} · {{PHONE}} · {{EMAIL}}<br>
+      GitHub: {{GITHUB}} · Video: {{VIDEO}} · {{LICENSE}}
+    </div>
+  </div>
+
+  <div class="sec-title">Studium &amp; Ausbildung</div>
+  {{EDUCATION_HTML}}
+
+  <div class="sec-title">Praxiserfahrung</div>
+  {{EXPERIENCE_HTML}}
+
+  <div class="sec-title">Ausgewählte Projekte</div>
+  {{PROJECTS_HTML}}
+  <div class="note">{{PROJECTS_NOTE}}</div>
+
+  <div class="sec-title">Kenntnisse &amp; Fähigkeiten</div>
+  <table class="skill-tbl">
+    <tr><td class="skill-key">Medien, Audio &amp; Interaktion</td><td>{{SKILLS_MEDIA}}</td></tr>
+    <tr><td class="skill-key">Web, Programmierung &amp; Systeme</td><td>{{SKILLS_TECH}}</td></tr>
+    <tr><td class="skill-key">Dokumentation &amp; Struktur</td><td>{{SKILLS_DOCS}}</td></tr>
+    <tr><td class="skill-key">Sprachen</td><td>{{SKILLS_LANG}}</td></tr>
+  </table>
+</body>
+</html>

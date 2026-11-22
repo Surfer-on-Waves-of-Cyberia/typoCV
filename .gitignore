@@ -1,0 +1,21 @@
+# Personal CV data & backups
+master_cv*.json
+cv_*.json
+!cv.example.json
+*.bak
+*.tmp
+profiles/media_praktikum_de.json
+
+# Build outputs
+out/
+*.pdf
+*.html
+!templates/*.html
+
+# Python & OS
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+*~

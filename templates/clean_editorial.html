@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 14mm 16mm; }
+  body { font-family: "DejaVu Sans", Arial, sans-serif; color: #1b1f23; font-size: 9.5pt; line-height: 1.4; margin: 0; }
+  header { border-bottom: 2px solid #1b1f23; padding-bottom: 8px; margin-bottom: 12px; }
+  h1 { font-size: 18pt; margin: 0 0 4px 0; letter-spacing: -0.2px; }
+  .target { font-size: 10pt; font-weight: 600; color: #2b4c7e; margin-bottom: 4px; }
+  .contact { font-size: 8.5pt; color: #444; }
+  h2 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.6px; border-bottom: 1px solid #d0d7de; padding-bottom: 2px; margin: 12px 0 7px 0; color: #1b1f23; }
+  .entry { display: flex; margin-bottom: 7px; break-inside: avoid; }
+  .meta { width: 115px; flex-shrink: 0; font-size: 8.5pt; color: #57606a; font-weight: 600; }
+  .content { flex: 1; }
+  .title { font-weight: 700; }
+  .org { font-weight: 400; color: #444; }
+  ul { margin: 2px 0 0 0; padding-left: 16px; }
+  li { margin-bottom: 2px; }
+  .summary { margin: 2px 0 0 0; }
+  .note { font-size: 8.3pt; color: #57606a; font-style: italic; margin-top: 4px; }
+  .skills p { margin: 3px 0; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>{{NAME}}</h1>
+    <div class="target">{{TARGET_ROLE}}</div>
+    <div class="contact">
+      {{LOCATION}} · {{PHONE}} · {{EMAIL}}<br>
+      GitHub: {{GITHUB}} · Video: {{VIDEO}} · {{LICENSE}}
+    </div>
+  </header>
+
+  <h2>Studium &amp; Ausbildung</h2>
+  {{EDUCATION_HTML}}
+
+  <h2>Praxiserfahrung</h2>
+  {{EXPERIENCE_HTML}}
+
+  <h2>Ausgewählte Projekte</h2>
+  {{PROJECTS_HTML}}
+  <div class="note">{{PROJECTS_NOTE}}</div>
+
+  <h2>Kenntnisse &amp; Fähigkeiten</h2>
+  <div class="skills">
+    <p><strong>Medien &amp; Interaktion:</strong> {{SKILLS_MEDIA}}</p>
+    <p><strong>Web, Programmierung &amp; Systeme:</strong> {{SKILLS_TECH}}</p>
+    <p><strong>Dokumentation &amp; Struktur:</strong> {{SKILLS_DOCS}}</p>
+    <p><strong>Sprachen:</strong> {{SKILLS_LANG}}</p>
+  </div>
+</body>
+</html>

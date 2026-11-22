@@ -1,0 +1,447 @@
+{
+  "meta": {
+    "version": "0.5.0",
+    "language_default": "de",
+    "last_updated": "2026-11-22",
+    "available_tags": [
+      "#interactive-media",
+      "#web-frontend",
+      "#python-tooling",
+      "#docs-comms",
+      "#systems-ops"
+    ],
+    "notes": "Synthetischer Beispiel-Datensatz zur Demonstration von typoCV."
+  },
+  "personal": {
+    "full_name": "Hannah Beispiel",
+    "address": {
+      "street": "Testgasse 8",
+      "postal_code": "36037",
+      "city": "Fulda",
+      "country": "Deutschland"
+    },
+    "contact": {
+      "email": "hannah.beispiel@example.invalid",
+      "phone": "+49 160 0000000"
+    },
+    "links": {
+      "github": "https://github.com/hannah-beispiel-demo",
+      "youtube_film_collab": "https://example.invalid/showreel",
+      "website": "https://hannah-beispiel.example.invalid",
+      "linkedin": null
+    },
+    "drivers_license": {
+      "class": "B",
+      "status": "completed",
+      "notes_de": "Führerschein Klasse B",
+      "default_visible": false,
+      "priority": 1,
+      "tags": [
+        "#docs-comms"
+      ]
+    }
+  },
+  "education": [
+    {
+      "id": "edu_demo_media_cs",
+      "degree_de": "B.Sc. Medieninformatik (Demo)",
+      "institution": "Hochschule Beispielstadt",
+      "location": "Beispielstadt, Deutschland",
+      "period": {
+        "start": "2024-10",
+        "end": "2027-08",
+        "is_current": true,
+        "display_de": "seit 10/2024"
+      },
+      "gpa": {
+        "value": 1.8,
+        "scale": "german_1_to_5",
+        "default_visible": false
+      },
+      "highlights_de": [
+        {
+          "text": "Interaktive Systeme, Web-Technologien, digitale Medienproduktion und technische Dokumentation",
+          "tags": [
+            "#interactive-media",
+            "#web-frontend",
+            "#docs-comms"
+          ],
+          "priority": 3,
+          "default_visible": true
+        },
+        {
+          "text": "Skripting, Versionskontrolle und strukturierte Teamarbeit in Software- und Medienprojekten",
+          "tags": [
+            "#python-tooling",
+            "#systems-ops"
+          ],
+          "priority": 2,
+          "default_visible": true
+        }
+      ],
+      "tags": [
+        "#interactive-media",
+        "#web-frontend",
+        "#python-tooling",
+        "#docs-comms"
+      ],
+      "priority": 3,
+      "default_visible": true
+    },
+    {
+      "id": "edu_demo_design_course",
+      "degree_de": "Zertifikatskurs Visuelle Gestaltung & Audio-Grundlagen (Demo)",
+      "institution": "Medienwerkstatt Beispiel",
+      "location": "Beispielstadt, Deutschland",
+      "period": {
+        "start": "2023-03",
+        "end": "2023-09",
+        "is_current": false,
+        "display_de": "03/2023 – 09/2023"
+      },
+      "highlights_de": [
+        {
+          "text": "Grundlagen von Layout, Typografie, Schnitt und einfacher Klangbearbeitung",
+          "tags": [
+            "#interactive-media",
+            "#docs-comms"
+          ],
+          "priority": 2,
+          "default_visible": true
+        }
+      ],
+      "tags": [
+        "#interactive-media",
+        "#docs-comms"
+      ],
+      "priority": 2,
+      "default_visible": true
+    }
+  ],
+  "experience": [
+    {
+      "id": "exp_demo_tutor_docs",
+      "role_de": "Tutorin für technische Dokumentation & Präsentation (Demo)",
+      "organization": "Hochschule Beispielstadt",
+      "location": "Beispielstadt, Deutschland",
+      "period": {
+        "start": "2025-02",
+        "end": null,
+        "is_current": true,
+        "display_de": "seit 02/2025"
+      },
+      "bullets_de": [
+        {
+          "text": "Betreuung von Studierenden beim Strukturieren von Projektberichten, Spezifikationen und Präsentationen",
+          "tags": [
+            "#docs-comms"
+          ],
+          "priority": 3,
+          "default_visible": true
+        },
+        {
+          "text": "Erstellung von Leitfäden, Checklisten und verständlichen Beispielen für Projektteams",
+          "tags": [
+            "#docs-comms",
+            "#python-tooling"
+          ],
+          "priority": 2,
+          "default_visible": true
+        }
+      ],
+      "tags": [
+        "#docs-comms",
+        "#python-tooling"
+      ],
+      "priority": 3,
+      "default_visible": true
+    },
+    {
+      "id": "exp_demo_lab_assistant",
+      "role_de": "Hilfskraft im Medien- & Weblabor (Demo)",
+      "organization": "Labor für Interaktive Medien Beispiel",
+      "location": "Beispielstadt, Deutschland",
+      "period": {
+        "start": "2024-05",
+        "end": "2025-01",
+        "is_current": false,
+        "display_de": "05/2024 – 01/2025"
+      },
+      "bullets_de": [
+        {
+          "text": "Wartung von Demo-Stationen, Aufbau von Web-Prototypen und Testen interaktiver Oberflächen",
+          "tags": [
+            "#web-frontend",
+            "#interactive-media",
+            "#systems-ops"
+          ],
+          "priority": 3,
+          "default_visible": true
+        },
+        {
+          "text": "Dokumentation von Setup-Schritten und Fehlerbehebung im Team-Wiki",
+          "tags": [
+            "#docs-comms",
+            "#systems-ops"
+          ],
+          "priority": 2,
+          "default_visible": true
+        }
+      ],
+      "tags": [
+        "#web-frontend",
+        "#interactive-media",
+        "#systems-ops"
+      ],
+      "priority": 3,
+      "default_visible": true
+    },
+    {
+      "id": "exp_demo_archive_entry",
+      "role_de": "Aushilfe Archiv & Lagerorganisation (Demo)",
+      "organization": "Stadtarchiv Beispiel",
+      "location": "Beispielstadt, Deutschland",
+      "period": {
+        "start": "2022-07",
+        "end": "2022-09",
+        "is_current": false,
+        "display_de": "07/2022 – 09/2022"
+      },
+      "bullets_de": [
+        {
+          "text": "Sortieren, Beschriften und Erfassen von Bestandseinheiten nach klaren Vorgaben",
+          "tags": [
+            "#docs-comms"
+          ],
+          "priority": 1,
+          "default_visible": false
+        }
+      ],
+      "tags": [
+        "#docs-comms"
+      ],
+      "priority": 1,
+      "default_visible": false
+    }
+  ],
+  "projects": [
+    {
+      "id": "proj_demo_sound_grid",
+      "name": "Klangmatrix — Web-Audio- & Visualisierungs-Prototyp",
+      "context_de": "Studienprojekt Interaktive Medien (Demo)",
+      "period": {
+        "start": "2025-10",
+        "end": "2026-02",
+        "is_current": false,
+        "display_de": "10/2025 – 02/2026"
+      },
+      "repo_or_link": "https://github.com/hannah-beispiel-demo/klangmatrix",
+      "tech_stack": [
+        "TypeScript",
+        "Web Audio API",
+        "Canvas 2D",
+        "HTML/CSS"
+      ],
+      "bullets_de": [
+        {
+          "text": "Entwicklung eines browserbasierten Step-Sequenzers mit synchronisierter Canvas-Visualisierung",
+          "tags": [
+            "#interactive-media",
+            "#web-frontend"
+          ],
+          "priority": 3,
+          "default_visible": true
+        },
+        {
+          "text": "Nutzerfreundliche Steuerung per Maus und Tastatur sowie Dokumentation der Preset-Struktur",
+          "tags": [
+            "#web-frontend",
+            "#docs-comms"
+          ],
+          "priority": 2,
+          "default_visible": true
+        }
+      ],
+      "tags": [
+        "#interactive-media",
+        "#web-frontend"
+      ],
+      "priority": 3,
+      "default_visible": true
+    },
+    {
+      "id": "proj_demo_cli_renamer",
+      "name": "batch-media-organizer — CLI-Werkzeug für Medienbestände",
+      "context_de": "Eigenprojekt Automatisierung (Demo)",
+      "period": {
+        "start": "2026-03",
+        "end": null,
+        "is_current": true,
+        "display_de": "seit 03/2026"
+      },
+      "repo_or_link": "https://github.com/hannah-beispiel-demo/batch-media-organizer",
+      "tech_stack": [
+        "Python",
+        "CLI",
+        "JSON",
+        "Shell"
+      ],
+      "bullets_de": [
+        {
+          "text": "Automatisierte Umbenennung, Validierung und Indexierung von Projektdateien über konfigurierbare Regeln",
+          "tags": [
+            "#python-tooling",
+            "#systems-ops"
+          ],
+          "priority": 3,
+          "default_visible": true
+        },
+        {
+          "text": "Dry-Run-Modus und klare Konsolenberichte zur Vermeidung von Fehlaktionen",
+          "tags": [
+            "#python-tooling",
+            "#docs-comms"
+          ],
+          "priority": 2,
+          "default_visible": true
+        }
+      ],
+      "tags": [
+        "#python-tooling",
+        "#systems-ops",
+        "#docs-comms"
+      ],
+      "priority": 3,
+      "default_visible": true
+    },
+    {
+      "id": "proj_demo_styleguide_kit",
+      "name": "Modularer Styleguide & Komponenten-Baukasten",
+      "context_de": "Projekt Web & Kommunikation (Demo)",
+      "period": {
+        "start": "2025-04",
+        "end": "2025-08",
+        "is_current": false,
+        "display_de": "04/2025 – 08/2025"
+      },
+      "repo_or_link": "https://github.com/hannah-beispiel-demo/styleguide-kit",
+      "tech_stack": [
+        "HTML5",
+        "CSS Grid",
+        "JavaScript",
+        "Markdown"
+      ],
+      "bullets_de": [
+        {
+          "text": "Aufbau wiederverwendbarer UI-Bausteine mit Fokus auf Lesbarkeit, Kontrast und klare Spezifikation",
+          "tags": [
+            "#web-frontend",
+            "#docs-comms"
+          ],
+          "priority": 2,
+          "default_visible": true
+        }
+      ],
+      "tags": [
+        "#web-frontend",
+        "#docs-comms"
+      ],
+      "priority": 2,
+      "default_visible": true
+    }
+  ],
+  "skills": {
+    "programming_languages": [
+      {
+        "name": "Python",
+        "level_de": "gut",
+        "tags": [
+          "#python-tooling",
+          "#systems-ops"
+        ],
+        "priority": 3,
+        "default_visible": true
+      },
+      {
+        "name": "JavaScript / TypeScript",
+        "level_de": "gut",
+        "tags": [
+          "#web-frontend",
+          "#interactive-media"
+        ],
+        "priority": 3,
+        "default_visible": true
+      },
+      {
+        "name": "HTML5 & CSS3",
+        "level_de": "sicher",
+        "tags": [
+          "#web-frontend",
+          "#interactive-media"
+        ],
+        "priority": 3,
+        "default_visible": true
+      },
+      {
+        "name": "Bash / Shell",
+        "level_de": "gut",
+        "tags": [
+          "#systems-ops",
+          "#python-tooling"
+        ],
+        "priority": 2,
+        "default_visible": true
+      }
+    ],
+    "frameworks_protocols_and_architecture": [
+      {
+        "name": "JSON, REST, Markdown, technische Spezifikationen",
+        "level_de": "gut",
+        "tags": [
+          "#docs-comms",
+          "#python-tooling"
+        ],
+        "priority": 3,
+        "default_visible": true
+      }
+    ],
+    "linux_devops_and_tools": [
+      {
+        "name": "Linux, Git, Docker",
+        "level_de": "gut",
+        "tags": [
+          "#systems-ops",
+          "#python-tooling"
+        ],
+        "priority": 3,
+        "default_visible": true
+      }
+    ],
+    "media_ui_and_creative_tech": [
+      {
+        "name": "Web Audio, Canvas, Audio-/Videoschnitt, UI-Prototyping",
+        "level_de": "gut",
+        "tags": [
+          "#interactive-media",
+          "#web-frontend"
+        ],
+        "priority": 3,
+        "default_visible": true
+      }
+    ],
+    "languages": [
+      {
+        "language_de": "Deutsch",
+        "level_de": "fließend",
+        "priority": 3,
+        "default_visible": true
+      },
+      {
+        "language_de": "Englisch",
+        "level_de": "gut",
+        "priority": 3,
+        "default_visible": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<style>
+  @page {
+    size: A4;
+    margin: 14mm 15mm;
+  }
+  body {
+    font-family: "Liberation Sans", "DejaVu Sans", Arial, sans-serif;
+    color: #111827;
+    font-size: 8.9pt;
+    line-height: 1.38;
+    margin: 0;
+  }
+  .mono {
+    font-family: "Liberation Mono", "DejaVu Sans Mono", monospace;
+    font-size: 7.8pt;
+    color: #4b5563;
+  }
+  header {
+    border-bottom: 1px solid #111827;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: 17pt;
+    margin: 0 0 2px 0;
+    font-weight: 700;
+  }
+  .role {
+    font-size: 8.8pt;
+    color: #065f46; /* глибокий смарагдово-лісовий акцент */
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  h2 {
+    font-size: 8.4pt;
+    font-family: "Liberation Mono", "DejaVu Sans Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #065f46;
+    background: #f3f4f6;
+    padding: 3px 6px;
+    margin: 10px 0 6px 0;
+  }
+  .entry {
+    display: flex;
+    margin-bottom: 6px;
+    break-inside: avoid;
+  }
+  .period {
+    width: 108px;
+    flex-shrink: 0;
+    font-family: "Liberation Mono", "DejaVu Sans Mono", monospace;
+    font-size: 7.7pt;
+    color: #6b7280;
+    padding-top: 1px;
+  }
+  .content {
+    flex: 1;
+  }
+  .title {
+    font-weight: 700;
+  }
+  .org {
+    font-weight: 400;
+    color: #4b5563;
+  }
+  ul {
+    margin: 2px 0 0 0;
+    padding-left: 14px;
+  }
+  li {
+    margin-bottom: 1.5px;
+  }
+  .summary {
+    margin: 2px 0 0 0;
+  }
+  .note {
+    font-size: 7.8pt;
+    color: #6b7280;
+    font-style: italic;
+    margin-top: 3px;
+  }
+  .skills p {
+    margin: 2.5px 0;
+    font-size: 8.5pt;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>{{NAME}}</h1>
+    <div class="role">{{TARGET_ROLE}}</div>
+    <div class="mono">
+      {{LOCATION}} | {{PHONE}} | {{EMAIL}}<br>
+      GH: {{GITHUB}} | VID: {{VIDEO}}<br>
+      {{LICENSE}}
+    </div>
+  </header>
+
+  <h2>01 // Studium &amp; Ausbildung</h2>
+  {{EDUCATION_HTML}}
+
+  <h2>02 // Praxiserfahrung</h2>
+  {{EXPERIENCE_HTML}}
+
+  <h2>03 // Ausgewählte Projekte</h2>
+  {{PROJECTS_HTML}}
+  <div class="note">{{PROJECTS_NOTE}}</div>
+
+  <h2>04 // Kenntnisse &amp; Fähigkeiten</h2>
+  <div class="skills">
+    <p><strong>Medien, Audio &amp; Interaktion:</strong> {{SKILLS_MEDIA}}</p>
+    <p><strong>Web, Programmierung &amp; Systeme:</strong> {{SKILLS_TECH}}</p>
+    <p><strong>Dokumentation &amp; Struktur:</strong> {{SKILLS_DOCS}}</p>
+    <p><strong>Sprachen:</strong> {{SKILLS_LANG}}</p>
+  </div>
+</body>
+</html>

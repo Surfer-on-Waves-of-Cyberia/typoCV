@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<style>
+  @page {
+    size: A4;
+    margin: 13mm 14mm;
+  }
+  body {
+    font-family: "Liberation Sans", "DejaVu Sans", Arial, sans-serif;
+    color: #1c1917;
+    font-size: 9pt;
+    line-height: 1.38;
+    margin: 0;
+  }
+  .hero {
+    background: #1c1917;
+    color: #fafaf9;
+    padding: 12px 15px;
+    border-left: 5px solid #d97706;
+    margin-bottom: 11px;
+  }
+  .hero h1 {
+    margin: 0 0 3px 0;
+    font-size: 17.5pt;
+    letter-spacing: -0.3px;
+  }
+  .hero .sub {
+    color: #fbbf24;
+    font-size: 8.8pt;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .hero .meta-line {
+    font-size: 7.9pt;
+    color: #d6d3d1;
+    line-height: 1.4;
+  }
+  h2 {
+    font-size: 9.2pt;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #9a3412;
+    border-bottom: 1.5px solid #e7e5e4;
+    padding-bottom: 2px;
+    margin: 11px 0 6px 0;
+  }
+  .entry {
+    display: flex;
+    margin-bottom: 6px;
+    break-inside: avoid;
+  }
+  .date {
+    width: 102px;
+    flex-shrink: 0;
+    font-size: 8pt;
+    font-weight: 700;
+    color: #78716c;
+  }
+  .detail {
+    flex: 1;
+  }
+  .title {
+    font-weight: 700;
+    color: #1c1917;
+  }
+  .org {
+    font-weight: 400;
+    color: #57534e;
+  }
+  ul {
+    margin: 2px 0 0 0;
+    padding-left: 15px;
+  }
+  li {
+    margin-bottom: 1.5px;
+  }
+  p.summary {
+    margin: 2px 0 0 0;
+  }
+  .note {
+    font-size: 7.9pt;
+    color: #78716c;
+    margin-top: 4px;
+  }
+  .skills-grid p {
+    margin: 2.5px 0;
+    font-size: 8.5pt;
+  }
+  .badge {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    font-weight: 700;
+    padding: 0 4px;
+    border-radius: 2px;
+    margin-right: 4px;
+  }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <h1>{{NAME}}</h1>
+    <div class="sub">{{TARGET_ROLE}}</div>
+    <div class="meta-line">
+      {{LOCATION}} · {{PHONE}} · {{EMAIL}}<br>
+      GitHub: {{GITHUB}} · Video: {{VIDEO}} · {{LICENSE}}
+    </div>
+  </div>
+
+  <h2>Studium &amp; Ausbildung</h2>
+  {{EDUCATION_HTML}}
+
+  <h2>Praxiserfahrung</h2>
+  {{EXPERIENCE_HTML}}
+
+  <h2>Ausgewählte Projekte</h2>
+  {{PROJECTS_HTML}}
+  <div class="note">{{PROJECTS_NOTE}}</div>
+
+  <h2>Kenntnisse &amp; Fähigkeiten</h2>
+  <div class="skills-grid">
+    <p><span class="badge">Medien &amp; Interaktion</span> {{SKILLS_MEDIA}}</p>
+    <p><span class="badge">Web, Code &amp; Systeme</span> {{SKILLS_TECH}}</p>
+    <p><span class="badge">Dokumentation &amp; Struktur</span> {{SKILLS_DOCS}}</p>
+    <p><span class="badge">Sprachen</span> {{SKILLS_LANG}}</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "tooling_and_docs_demo",
+  "target_role": "Praktikum Tooling, Web & Technische Dokumentation (Demo)",
+  "template": "mono_index",
+  "limits": {
+    "education": 2,
+    "experience": 2,
+    "projects": 2
+  },
+  "prefer_experience": [
+    "exp_demo_tutor_docs",
+    "exp_demo_lab_assistant"
+  ],
+  "prefer_projects": [
+    "proj_demo_cli_renamer",
+    "proj_demo_styleguide_kit"
+  ],
+  "tag_weights": {
+    "#python-tooling": 3.0,
+    "#docs-comms": 3.0,
+    "#systems-ops": 2.0,
+    "#web-frontend": 1.5,
+    "#interactive-media": 0.5
+  }
+}

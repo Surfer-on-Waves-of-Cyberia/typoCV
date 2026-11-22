@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 13mm 15mm; }
+  body {
+    font-family: "Liberation Sans", "DejaVu Sans", Arial, sans-serif;
+    color: #111111;
+    font-size: 8.8pt;
+    line-height: 1.38;
+    margin: 0;
+  }
+  header {
+    border-top: 3px solid #111111;
+    padding-top: 8px;
+    margin-bottom: 11px;
+  }
+  h1 {
+    font-size: 18pt;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    letter-spacing: -0.4px;
+  }
+  .role {
+    font-size: 8.8pt;
+    font-weight: 700;
+    color: #b91c1c;
+    margin-bottom: 5px;
+  }
+  .contact {
+    font-size: 7.7pt;
+    color: #444444;
+    line-height: 1.4;
+  }
+  h2 {
+    font-size: 8.3pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #111111;
+    border-top: 1px solid #111111;
+    padding-top: 4px;
+    margin: 10px 0 6px 0;
+  }
+  .row-tbl {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-bottom: 6px;
+    page-break-inside: avoid;
+  }
+  .col-date {
+    width: 96px;
+    vertical-align: top;
+    padding-right: 12px;
+    font-size: 7.8pt;
+    font-weight: 700;
+    color: #555555;
+  }
+  .col-body {
+    vertical-align: top;
+  }
+  .title { font-weight: 700; color: #111111; }
+  .org { color: #555555; font-weight: 400; }
+  .summary { margin-top: 2px; }
+  ul { margin: 2px 0 0 0; padding-left: 14px; }
+  li { margin-bottom: 1.5px; }
+  .note { font-size: 7.6pt; color: #666666; font-style: italic; margin-top: 3px; }
+
+  .skill-tbl {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+  .skill-tbl td {
+    padding: 2px 4px;
+    vertical-align: top;
+    font-size: 8.2pt;
+  }
+  .skill-key {
+    width: 185px;
+    font-weight: 700;
+    color: #111111;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>{{NAME}}</h1>
+    <div class="role">{{TARGET_ROLE}}</div>
+    <div class="contact">
+      {{LOCATION}} · {{PHONE}} · {{EMAIL}}<br>
+      GitHub: {{GITHUB}} · Video: {{VIDEO}} · {{LICENSE}}
+    </div>
+  </header>
+
+  <h2>Studium &amp; Ausbildung</h2>
+  {{EDUCATION_HTML}}
+
+  <h2>Praxiserfahrung</h2>
+  {{EXPERIENCE_HTML}}
+
+  <h2>Ausgewählte Projekte</h2>
+  {{PROJECTS_HTML}}
+  <div class="note">{{PROJECTS_NOTE}}</div>
+
+  <h2>Kenntnisse &amp; Fähigkeiten</h2>
+  <table class="skill-tbl">
+    <tr><td class="skill-key">Medien, Audio &amp; Interaktion</td><td>{{SKILLS_MEDIA}}</td></tr>
+    <tr><td class="skill-key">Web, Programmierung &amp; Systeme</td><td>{{SKILLS_TECH}}</td></tr>
+    <tr><td class="skill-key">Dokumentation &amp; Struktur</td><td>{{SKILLS_DOCS}}</td></tr>
+    <tr><td class="skill-key">Sprachen</td><td>{{SKILLS_LANG}}</td></tr>
+  </table>
+</body>
+</html>
