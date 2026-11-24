@@ -1,6 +1,5 @@
 # Personal CV data & backups
 master_cv*.json
-cv_*.json
 !cv.example.json
 *.bak
 *.tmp

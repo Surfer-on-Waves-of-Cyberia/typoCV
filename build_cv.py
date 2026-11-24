@@ -19,6 +19,12 @@ def _clean_text(text: str) -> str:
     return cleaned.strip()
 
 
+def _item_key(section_key: str, idx: int, item: dict) -> str:
+    if isinstance(item, dict) and item.get("id"):
+        return str(item["id"])
+    return f"{section_key}:{idx}"
+
+
 def score_obj(obj: dict, tag_weights: dict) -> float:
     base = float(obj.get("priority", obj.get("weight", 2))) * 2.5
     norm_weights = {_norm_tag(k): float(v) for k, v in tag_weights.items()}
@@ -40,7 +46,17 @@ def select_items(
     limit: int | None,
     prefer_ids: list[str] | None = None,
     unfiltered: bool = False,
+    manual_ids: set[str] | None = None,
+    section_key: str = "items",
 ) -> list[dict]:
+    if manual_ids is not None:
+        selected = []
+        for idx, item in enumerate(items):
+            key = _item_key(section_key, idx, item)
+            if key in manual_ids or str(idx) in manual_ids:
+                selected.append(item)
+        return selected
+
     if unfiltered:
         return list(items)
 
@@ -196,6 +212,7 @@ def render_html(
     weights: dict,
     limits: dict,
     unfiltered: bool = False,
+    manual_selection: dict | None = None,
 ) -> str:
     personal = cv.get("personal", {})
     contact = personal.get("contact", {})
@@ -209,26 +226,39 @@ def render_html(
     if isinstance(license_obj, dict) and license_obj.get("default_visible"):
         license_str = _clean_text(license_obj.get("notes_de", ""))
 
+    ms = manual_selection or {}
+    edu_manual = set(ms["education"]) if isinstance(ms.get("education"), list) else None
+    exp_manual = set(ms["experience"]) if isinstance(ms.get("experience"), list) else None
+    proj_manual = set(ms["projects"]) if isinstance(ms.get("projects"), list) else None
+
+    is_manual = manual_selection is not None
+
     edu_items = select_items(
         cv.get("education", []),
         weights,
-        None if unfiltered else limits.get("education", 3),
+        None if (unfiltered or is_manual) else limits.get("education", 3),
         prefer_ids=prof.get("prefer_education", []),
         unfiltered=unfiltered,
+        manual_ids=edu_manual,
+        section_key="education",
     )
     exp_items = select_items(
         cv.get("experience", []),
         weights,
-        None if unfiltered else limits.get("experience", 3),
+        None if (unfiltered or is_manual) else limits.get("experience", 3),
         prefer_ids=prof.get("prefer_experience", []),
         unfiltered=unfiltered,
+        manual_ids=exp_manual,
+        section_key="experience",
     )
     proj_items = select_items(
         cv.get("projects", []),
         weights,
-        None if unfiltered else limits.get("projects", 5),
+        None if (unfiltered or is_manual) else limits.get("projects", 5),
         prefer_ids=prof.get("prefer_projects", []),
         unfiltered=unfiltered,
+        manual_ids=proj_manual,
+        section_key="projects",
     )
 
     notes_raw = cv.get("meta", {}).get("notes", "")
@@ -238,9 +268,9 @@ def render_html(
         else _clean_text(notes_raw)
     )
 
-    media_limit = 999 if unfiltered else 4
-    tech_limit = 999 if unfiltered else 7
-    docs_limit = 999 if unfiltered else 4
+    media_limit = 999 if (unfiltered or is_manual) else 4
+    tech_limit = 999 if (unfiltered or is_manual) else 7
+    docs_limit = 999 if (unfiltered or is_manual) else 4
 
     replacements = {
         "{{NAME}}": _clean_text(personal.get("full_name", "")),
@@ -250,7 +280,7 @@ def render_html(
         "{{GITHUB}}": _clean_text(links.get("github") or ""),
         "{{VIDEO}}": _clean_text(links.get("youtube_film_collab") or ""),
         "{{LICENSE}}": license_str,
-        "{{TARGET_ROLE}}": "" if unfiltered else _clean_text(prof.get("target_role", "")),
+        "{{TARGET_ROLE}}": "" if (unfiltered or is_manual) else _clean_text(prof.get("target_role", "")),
         "{{EDUCATION_HTML}}": render_table_rows(edu_items, "education", weights),
         "{{EXPERIENCE_HTML}}": render_table_rows(exp_items, "experience", weights),
         "{{PROJECTS_HTML}}": render_table_rows(proj_items, "projects", weights),
@@ -353,6 +383,11 @@ def main() -> None:
     parser.add_argument("--template", help="Überschreibt das Template aus dem Profil")
     parser.add_argument("--out-dir", default="out")
     parser.add_argument("--all", action="store_true", help="Alle Einträge ohne Filter und Limits ausgeben")
+    parser.add_argument(
+        "--manual",
+        action="store_true",
+        help="Nur manuell markierte Einträge aus manual_selection verwenden",
+    )
     args = parser.parse_args()
 
     cv_path = Path(args.cv)
@@ -383,6 +418,7 @@ def main() -> None:
         weights,
         limits,
         unfiltered=args.all,
+        manual_selection=cv.get("manual_selection") if args.manual else None,
     )
     html_file = out_dir / "cv.html"
     pdf_file = out_dir / "cv.pdf"

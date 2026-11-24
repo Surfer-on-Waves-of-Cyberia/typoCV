@@ -39,15 +39,15 @@ A lightweight, plain-text CV generator and editor built around a single structur
 
 ## Roadmap & Future Tasks
 
-    - [ ] **Editors:** Dedicated editors for profiles ("lenses"), visual themes/templates, and direct post-build adjustments on the resulting resume.
+- [ ] **Editors:** Dedicated editors for profiles ("lenses"), visual themes/templates, and direct post-build adjustments on the resulting resume.
 
-    - [ ] **Interview Mascots:** Adding interactive mascots/characters to guide data collection and questionnaire-based entry creation.
+- [ ] **Interview Mascots:** Adding interactive mascots/characters to guide data collection and questionnaire-based entry creation.
 
-    - [ ] **Workflow Modes:** Manual intuitive editing (with and without optional AI assistance) alongside an emergency "due yesterday" fast-track mode.
+- [ ] **Workflow Modes:** Manual intuitive editing (with and without optional AI assistance) alongside an emergency "due yesterday" fast-track mode.
 
-    - [ ] **Dates & Deadlines:** Tracking application dates, deadlines, and reminders.
+- [ ] **Dates & Deadlines:** Tracking application dates, deadlines, and reminders.
 
-    - [ ] **Cross-Platform Apps & AI Styling:** Evolving toward desktop (likely Java) and mobile (likely Kotlin) applications with optional AI-assisted styling integrations (with optional local setup and cloud ).
+- [ ] **Cross-Platform Apps & AI Styling:** Evolving toward desktop (likely Java) and mobile (likely Kotlin) applications with optional AI-assisted styling integrations (with optional local setup and cloud ).
 
 ## Weighting System & Profile Intuitiveness
 

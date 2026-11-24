@@ -1,8 +1,8 @@
 import argparse
 import json
-import re
 import os
 import platform
+import re
 import shutil
 import subprocess
 from abc import ABC, abstractmethod
@@ -71,6 +71,7 @@ class CvStore:
                 "experience": [],
                 "projects": [],
                 "skills": {},
+                "manual_selection": {},
             }
         return self.data
 
@@ -93,6 +94,41 @@ class CvStore:
             skills = self.data.setdefault("skills", {})
             return skills.setdefault(bucket, [])
         return self.data.setdefault(section, [])
+
+    @staticmethod
+    def item_key(section: str, index: int, item: dict) -> str:
+        if isinstance(item, dict) and item.get("id"):
+            return str(item["id"])
+        return f"{section}:{index}"
+
+    def get_manual_set(self, section: str) -> set[str]:
+        ms = self.data.setdefault("manual_selection", {})
+        bucket = ms.setdefault(section, [])
+        return {str(x) for x in bucket}
+
+    def is_manually_selected(self, section: str, index: int, item: dict) -> bool:
+        manual_set = self.get_manual_set(section)
+        key = self.item_key(section, index, item)
+        return key in manual_set or str(index) in manual_set
+
+    def toggle_manual_item(self, section: str, index: int) -> bool:
+        col = self.get_collection(section)
+        if not (0 <= index < len(col)):
+            return False
+        item = col[index]
+        key = self.item_key(section, index, item)
+        ms = self.data.setdefault("manual_selection", {})
+        bucket = [str(x) for x in ms.setdefault(section, [])]
+
+        if key in bucket or str(index) in bucket:
+            bucket = [x for x in bucket if x not in {key, str(index)}]
+            checked = False
+        else:
+            bucket.append(key)
+            checked = True
+
+        ms[section] = bucket
+        return checked
 
     @staticmethod
     def item_title(section: str, item: dict) -> str:
@@ -277,7 +313,12 @@ class CvStore:
 
     def delete_item(self, section: str, index: int) -> dict:
         col = self.get_collection(section)
-        return col.pop(index)
+        removed = col.pop(index)
+        key = self.item_key(section, index, removed)
+        ms = self.data.get("manual_selection")
+        if isinstance(ms, dict) and isinstance(ms.get(section), list):
+            ms[section] = [str(x) for x in ms[section] if str(x) != key]
+        return removed
 
     @staticmethod
     def _open_file(file_path: Path) -> None:
@@ -345,6 +386,7 @@ class CvStore:
         out_dir: Path = Path("out"),
         template: str | None = None,
         profile: str | None = None,
+        manual: bool = False,
         script_candidates: tuple[str, ...] = ("build_cv.py", "build.py"),
     ) -> Path:
         base_dir = self.path.resolve().parent
@@ -374,7 +416,9 @@ class CvStore:
             "--out-dir",
             str(resolved_out),
         ]
-        if profile and profile != "(default)":
+        if manual:
+            cmd.append("--manual")
+        elif profile and profile != "(default)":
             cmd.extend(["--profile", profile])
         else:
             cmd.append("--all")
@@ -422,9 +466,10 @@ class TkGuiAdapter(UIAdapter):
 
         root = tk.Tk()
         root.title(f"typoCV 0.5.0 Editor — {self.store.path.name}")
-        root.geometry("920x600")
+        root.geometry("980x620")
 
         current_section = tk.StringVar(value="experience")
+        manual_mode = tk.BooleanVar(value=bool(self.store.data.get("manual_selection")))
         selected_idx: int | None = None
 
         top_bar = ttk.Frame(root, padding=8)
@@ -436,20 +481,28 @@ class TkGuiAdapter(UIAdapter):
             textvariable=current_section,
             values=AVAILABLE_SECTIONS,
             state="readonly",
-            width=36,
+            width=34,
         )
         sec_combo.pack(side=tk.LEFT, padx=6)
 
-        ttk.Button(top_bar, text="+ Новий запис", command=lambda: clear_form()).pack(side=tk.LEFT, padx=4)
-        ttk.Button(top_bar, text="Зберегти запис", command=lambda: save_current()).pack(side=tk.LEFT, padx=4)
-        ttk.Button(top_bar, text="Видалити", command=lambda: delete_current()).pack(side=tk.LEFT, padx=4)
+        ttk.Button(top_bar, text="+ Новий запис", command=lambda: clear_form()).pack(side=tk.LEFT, padx=3)
+        ttk.Button(top_bar, text="Зберегти запис", command=lambda: save_current()).pack(side=tk.LEFT, padx=3)
+        ttk.Button(top_bar, text="Видалити", command=lambda: delete_current()).pack(side=tk.LEFT, padx=3)
+        ttk.Button(top_bar, text="Toggle [x]", command=lambda: toggle_selected()).pack(side=tk.LEFT, padx=3)
+        ttk.Checkbutton(
+            top_bar,
+            text="Manual mode",
+            variable=manual_mode,
+            command=lambda: refresh_list(),
+        ).pack(side=tk.LEFT, padx=(8, 4))
+
         ttk.Button(top_bar, text="Записати JSON", command=lambda: persist_json()).pack(side=tk.RIGHT, padx=4)
 
         main_pane = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
         main_pane.pack(fill=tk.BOTH, expand=True, padx=8, pady=6)
 
         left_frame = ttk.Frame(main_pane, padding=4)
-        listbox = tk.Listbox(left_frame, width=38)
+        listbox = tk.Listbox(left_frame, width=42)
         listbox.pack(fill=tk.BOTH, expand=True)
         main_pane.add(left_frame, weight=1)
 
@@ -487,26 +540,26 @@ class TkGuiAdapter(UIAdapter):
         default_tpl = "swiss_grid" if "swiss_grid" in templates else templates[0]
         current_template = tk.StringVar(value=default_tpl)
 
-        ttk.Label(top_bar, text="Темплейт:").pack(side=tk.LEFT, padx=(10, 2))
+        ttk.Label(top_bar, text="Темплейт:").pack(side=tk.LEFT, padx=(8, 2))
         tpl_combo = ttk.Combobox(
             top_bar,
             textvariable=current_template,
             values=templates,
             state="readonly",
-            width=16,
+            width=15,
         )
         tpl_combo.pack(side=tk.LEFT, padx=(0, 6))
 
         profiles = ["(default)"] + self.store.available_profiles()
         current_profile = tk.StringVar(value=profiles[0])
 
-        ttk.Label(top_bar, text="Лінза:").pack(side=tk.LEFT, padx=(6, 2))
+        ttk.Label(top_bar, text="Лінза:").pack(side=tk.LEFT, padx=(4, 2))
         prof_combo = ttk.Combobox(
             top_bar,
             textvariable=current_profile,
             values=profiles,
             state="readonly",
-            width=22,
+            width=18,
         )
         prof_combo.pack(side=tk.LEFT, padx=(0, 6))
 
@@ -521,15 +574,50 @@ class TkGuiAdapter(UIAdapter):
 
         prof_combo.bind("<<ComboboxSelected>>", on_profile_change)
 
-        def refresh_list() -> None:
+        def refresh_list(preserve_idx: int | None = None) -> None:
             nonlocal selected_idx
             listbox.delete(0, tk.END)
-            col = self.store.get_collection(current_section.get())
+            sec = current_section.get()
+            col = self.store.get_collection(sec)
+            show_checks = bool(manual_mode.get())
+
             for i, item in enumerate(col):
+                mark = ""
+                if show_checks:
+                    mark = "[x] " if self.store.is_manually_selected(sec, i, item) else "[ ] "
                 vis_mark = "" if item.get("default_visible", True) else " [hidden]"
-                t = self.store.item_title(current_section.get(), item)
-                listbox.insert(tk.END, f"{i + 1}. {t}{vis_mark}")
-            selected_idx = None
+                t = self.store.item_title(sec, item)
+                listbox.insert(tk.END, f"{mark}{i + 1}. {t}{vis_mark}")
+
+            if preserve_idx is not None and 0 <= preserve_idx < len(col):
+                listbox.selection_set(preserve_idx)
+                listbox.see(preserve_idx)
+                selected_idx = preserve_idx
+            else:
+                selected_idx = None
+
+        def toggle_selected() -> None:
+            sel = listbox.curselection()
+            idx = sel[0] if sel else selected_idx
+            if idx is None:
+                messagebox.showwarning("Увага", "Обери запис у списку.")
+                return
+            sec = current_section.get()
+            self.store.toggle_manual_item(sec, idx)
+            if not manual_mode.get():
+                manual_mode.set(True)
+            refresh_list(preserve_idx=idx)
+
+        def on_double_click(_event=None) -> None:
+            sel = listbox.curselection()
+            if not sel:
+                return
+            idx = sel[0]
+            sec = current_section.get()
+            self.store.toggle_manual_item(sec, idx)
+            if not manual_mode.get():
+                manual_mode.set(True)
+            refresh_list(preserve_idx=idx)
 
         def clear_form() -> None:
             nonlocal selected_idx
@@ -587,9 +675,10 @@ class TkGuiAdapter(UIAdapter):
             sec = current_section.get()
             if selected_idx is None:
                 self.store.add_item(sec, payload)
+                refresh_list()
             else:
                 self.store.update_item(sec, selected_idx, payload)
-            refresh_list()
+                refresh_list(preserve_idx=selected_idx)
             messagebox.showinfo("Готово", "Зміни застосовано в пам'яті. Натисни 'Записати JSON'.")
 
         def delete_current() -> None:
@@ -615,14 +704,17 @@ class TkGuiAdapter(UIAdapter):
                 selected_prof = (
                     None if current_profile.get() == "(default)" else current_profile.get()
                 )
+                is_manual = bool(manual_mode.get())
                 pdf_file = self.store.build_and_open(
                     template=current_template.get(),
                     profile=selected_prof,
+                    manual=is_manual,
                 )
+                mode_label = "manual" if is_manual else current_profile.get()
                 if root.winfo_exists():
                     messagebox.showinfo(
                         "Готово",
-                        f"PDF ({current_template.get()} / {current_profile.get()}) згенеровано та відкрито:\n{pdf_file}",
+                        f"PDF ({current_template.get()} / {mode_label}) згенеровано та відкрито:\n{pdf_file}",
                     )
             except subprocess.CalledProcessError as exc:
                 if root.winfo_exists():
@@ -639,6 +731,7 @@ class TkGuiAdapter(UIAdapter):
         )
 
         listbox.bind("<<ListboxSelect>>", on_select)
+        listbox.bind("<Double-Button-1>", on_double_click)
         sec_combo.bind("<<ComboboxSelected>>", lambda _e: (refresh_list(), clear_form()))
 
         refresh_list()
@@ -650,13 +743,20 @@ class CliAdapter(UIAdapter):
 
     def run(self) -> None:
         print(f"typoCV 0.5.0 Editor (CLI) -> {self.store.path}")
+        manual_mode = bool(self.store.data.get("manual_selection"))
         while True:
-            print("\nРозділи:")
+            print(f"\nРозділи [manual={manual_mode}]:")
             for i, sec in enumerate(AVAILABLE_SECTIONS, 1):
                 print(f"  {i}. {sec}")
-            choice = input("Обери номер розділу (або 's' для збереження, 'q' для виходу): ").strip().lower()
+            choice = input(
+                "Обери номер розділу ('m' toggle manual mode, 's' зберегти, 'q' вихід): "
+            ).strip().lower()
             if choice == "q":
                 break
+            if choice == "m":
+                manual_mode = not manual_mode
+                print(f"Manual mode: {manual_mode}")
+                continue
             if choice == "s":
                 self.store.save(make_backup=True)
                 print("Збережено.")
@@ -668,13 +768,26 @@ class CliAdapter(UIAdapter):
             sec = AVAILABLE_SECTIONS[int(choice) - 1]
             col = self.store.get_collection(sec)
             for idx, item in enumerate(col):
-                print(f"  [{idx}] {self.store.item_title(sec, item)} | {self.store.item_period_str(item)}")
+                mark = ""
+                if manual_mode:
+                    mark = "[x] " if self.store.is_manually_selected(sec, idx, item) else "[ ] "
+                print(f"  [{idx}] {mark}{self.store.item_title(sec, item)} | {self.store.item_period_str(item)}")
 
             act = input(
-                "Дія: [a] додати, [e] редагувати, [d] видалити, [p] побудувати PDF, [b] назад: "
+                "Дія: [a] додати, [e] редагувати, [d] видалити, [t] toggle [x], [p] побудувати PDF, [b] назад: "
             ).strip().lower()
 
-            if act == "a":
+            if act == "t":
+                raw_idx = input("Індекс запису для перемикання [x]: ").strip()
+                if not raw_idx.isdigit() or not (0 <= int(raw_idx) < len(col)):
+                    print("Невірний індекс.")
+                    continue
+                idx = int(raw_idx)
+                state = self.store.toggle_manual_item(sec, idx)
+                manual_mode = True
+                print(f"{'[x]' if state else '[ ]'} {self.store.item_title(sec, col[idx])}")
+
+            elif act == "a":
                 raw_prio = input("Priority [1-3] (default 2): ").strip()
                 priority = int(raw_prio) if raw_prio in {"1", "2", "3"} else 2
                 payload = {
@@ -733,7 +846,7 @@ class CliAdapter(UIAdapter):
             elif act == "p":
                 profs = self.store.available_profiles()
                 chosen_prof = None
-                if profs:
+                if profs and not manual_mode:
                     raw_prof = input(f"Лінза {profs} (Enter — без профілю): ").strip()
                     if raw_prof:
                         chosen_prof = raw_prof
@@ -745,8 +858,10 @@ class CliAdapter(UIAdapter):
                 pdf_file = self.store.build_and_open(
                     template=chosen_tpl,
                     profile=chosen_prof,
+                    manual=manual_mode,
                 )
-                print(f"Зібрано та відкрито: {pdf_file} [лінза: {chosen_prof or 'default'}, шаблон: {chosen_tpl}]")
+                mode_str = "manual" if manual_mode else (chosen_prof or "default")
+                print(f"Зібрано та відкрито: {pdf_file} [режим: {mode_str}, шаблон: {chosen_tpl}]")
 
 
 def main() -> None:
