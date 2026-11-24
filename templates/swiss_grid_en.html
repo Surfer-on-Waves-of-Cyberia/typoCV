@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 11.5mm 14mm; }
+  body {
+    font-family: "Liberation Sans", "DejaVu Sans", Arial, sans-serif;
+    color: #111111;
+    font-size: 8.6pt;
+    line-height: 1.35;
+    margin: 0;
+    overflow-wrap: break-word;
+  }
+  header {
+    border-top: 3px solid #111111;
+    padding-top: 7px;
+    margin-bottom: 9px;
+  }
+  h1 {
+    font-size: 17.5pt;
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    letter-spacing: -0.35px;
+  }
+  .role {
+    font-size: 8.6pt;
+    font-weight: 700;
+    color: #b91c1c;
+    margin-bottom: 4px;
+  }
+  .contact {
+    font-size: 7.6pt;
+    color: #444444;
+    line-height: 1.36;
+    word-break: break-word;
+  }
+  h2 {
+    font-size: 8.2pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #111111;
+    border-top: 1px solid #111111;
+    padding-top: 3.5px;
+    margin: 8.5px 0 5px 0;
+    page-break-after: avoid;
+  }
+  .row-tbl {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-bottom: 5px;
+    page-break-inside: avoid;
+  }
+  .col-date {
+    width: 102px;
+    vertical-align: top;
+    padding-right: 11px;
+    font-size: 7.6pt;
+    font-weight: 700;
+    color: #555555;
+    line-height: 1.32;
+  }
+  .col-body {
+    vertical-align: top;
+    min-width: 0;
+  }
+  .title { font-weight: 700; color: #111111; }
+  .org { color: #555555; font-weight: 400; }
+  .summary { margin: 1.5px 0 0 0; font-size: 8pt; color: #333333; line-height: 1.32; }
+  ul { margin: 2px 0 0 0; padding-left: 13.5px; }
+  li { margin-bottom: 1.2px; }
+  .note { font-size: 7.5pt; color: #666666; font-style: italic; margin-top: 2.5px; }
+
+  .skill-tbl {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+  .skill-tbl td {
+    padding: 1.8px 4px;
+    vertical-align: top;
+    font-size: 8.1pt;
+    line-height: 1.32;
+  }
+  .skill-key {
+    width: 172px;
+    font-weight: 700;
+    color: #111111;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>{{NAME}}</h1>
+    <div class="role">{{TARGET_ROLE}}</div>
+    <div class="contact">
+      {{LOCATION}} · {{PHONE}} · {{EMAIL}}<br>
+      GitHub: {{GITHUB}} · Video: {{VIDEO}}
+    </div>
+  </header>
+
+  <h2>Education</h2>
+  {{EDUCATION_HTML}}
+
+  <h2>Experience</h2>
+  {{EXPERIENCE_HTML}}
+
+  <h2>Selected Projects</h2>
+  {{PROJECTS_HTML}}
+  <div class="note">{{PROJECTS_NOTE}}</div>
+
+  <h2>Skills &amp; Languages</h2>
+  <table class="skill-tbl">
+    <tr><td class="skill-key">Media, Audio &amp; HCI</td><td>{{SKILLS_MEDIA}}</td></tr>
+    <tr><td class="skill-key">Systems, Code &amp; Tools</td><td>{{SKILLS_TECH}}</td></tr>
+    <tr><td class="skill-key">Docs &amp; Workflows</td><td>{{SKILLS_DOCS}}</td></tr>
+    <tr><td class="skill-key">Languages</td><td>{{SKILLS_LANG}}</td></tr>
+  </table>
+</body>
+</html>

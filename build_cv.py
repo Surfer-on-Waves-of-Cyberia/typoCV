@@ -34,7 +34,7 @@ def score_obj(obj: dict, tag_weights: dict) -> float:
     tag_bonus = sum(matched) * 0.55 if matched else 0.0
 
     raw_heading = " ".join(
-        str(obj.get(k, "")) for k in ("name", "title", "role_de", "degree_de")
+        str(obj.get(k, "")) for k in ("name", "title", "role", "degree")
     )
     todo_penalty = -1.5 if "[TODO" in raw_heading else 0.0
     return base + tag_bonus + todo_penalty
@@ -88,7 +88,7 @@ def _select_sub_bullets(sub_items: list, tag_weights: dict, max_bullets: int = 2
             if txt:
                 scored.append((0.0, idx, txt))
             continue
-        if not b.get("default_visible", True):
+        if not isinstance(b, dict) or not b.get("default_visible", True):
             continue
         txt = _clean_text(str(b.get("text", "")))
         if txt:
@@ -100,10 +100,10 @@ def _select_sub_bullets(sub_items: list, tag_weights: dict, max_bullets: int = 2
 
 def _format_period(period_field) -> str:
     if isinstance(period_field, dict):
-        if period_field.get("display_de"):
-            return str(period_field["display_de"])
+        if period_field.get("display"):
+            return str(period_field["display"])
         start = period_field.get("start") or ""
-        end = period_field.get("end") or ("heute" if period_field.get("is_current") else "")
+        end = period_field.get("end") or ("present" if period_field.get("is_current") else "")
         return f"{start} – {end}".strip(" –")
     return str(period_field or "")
 
@@ -114,25 +114,25 @@ def render_table_rows(items: list[dict], kind: str, tag_weights: dict) -> str:
         period = _format_period(item.get("period"))
 
         if kind == "education":
-            title = _clean_text(item.get("degree_de") or item.get("title", ""))
+            title = _clean_text(item.get("degree") or item.get("title", ""))
             org = _clean_text(item.get("institution") or item.get("org", ""))
-            sub_list = item.get("highlights_de") or item.get("bullets", [])
+            sub_list = item.get("highlights") or item.get("bullets", [])
             extra_line = ""
             gpa = item.get("gpa")
             if isinstance(gpa, dict) and gpa.get("default_visible") and gpa.get("value") is not None:
                 val = str(gpa["value"]).replace(".", ",")
-                extra_line = f'<p class="summary">Schnitt: <strong>{val}</strong></p>'
+                extra_line = f'<p class="summary">GPA: <strong>{val}</strong></p>'
 
         elif kind == "experience":
-            title = _clean_text(item.get("role_de") or item.get("title", ""))
+            title = _clean_text(item.get("role") or item.get("title", ""))
             org = _clean_text(item.get("organization") or item.get("org", ""))
-            sub_list = item.get("bullets_de") or item.get("bullets", [])
+            sub_list = item.get("bullets", [])
             extra_line = ""
 
         else:
             title = _clean_text(item.get("name") or item.get("title", ""))
-            org = _clean_text(item.get("context_de") or item.get("org", ""))
-            sub_list = item.get("bullets_de") or item.get("bullets", [])
+            org = _clean_text(item.get("context") or item.get("org", ""))
+            sub_list = item.get("bullets", [])
             stack = [_clean_text(s) for s in (item.get("tech_stack") or []) if _clean_text(s)]
             extra_line = (
                 f'<p class="summary"><strong>Stack:</strong> {", ".join(stack[:6])}</p>'
@@ -168,7 +168,11 @@ def render_table_rows(items: list[dict], kind: str, tag_weights: dict) -> str:
 
 
 def _format_skills_bucket(
-    skills_dict: dict, bucket_keys: list[str], tag_weights: dict, limit: int = 6
+    skills_dict: dict,
+    bucket_keys: list[str],
+    tag_weights: dict,
+    limit: int = 6,
+    used_names: set[str] | None = None,
 ) -> str:
     collected = []
     for b_idx, bkey in enumerate(bucket_keys):
@@ -181,13 +185,23 @@ def _format_skills_bucket(
             collected.append((score_obj(sk, tag_weights), b_idx * 100 + s_idx, name))
 
     collected.sort(key=lambda x: (-x[0], x[1]))
-    unique_names = []
+    picked = []
+    seen_local = set()
     for _, _, name in collected:
-        if name not in unique_names:
-            unique_names.append(name)
-        if len(unique_names) >= limit:
+        norm = name.lower()
+        if norm in seen_local:
+            continue
+        if used_names is not None and norm in used_names:
+            continue
+        seen_local.add(norm)
+        picked.append(name)
+        if len(picked) >= limit:
             break
-    return ", ".join(unique_names)
+
+    if used_names is not None:
+        used_names.update(n.lower() for n in picked)
+
+    return "; ".join(picked)
 
 
 def _format_languages(skills_dict: dict) -> str:
@@ -195,8 +209,8 @@ def _format_languages(skills_dict: dict) -> str:
     for idx, item in enumerate(skills_dict.get("languages", [])):
         if not isinstance(item, dict) or not item.get("default_visible", True):
             continue
-        lang = _clean_text(item.get("language_de") or item.get("name", ""))
-        lvl = _clean_text(item.get("level_de", ""))
+        lang = _clean_text(item.get("language") or item.get("name", ""))
+        lvl = _clean_text(item.get("level", ""))
         if lang:
             prio = float(item.get("priority", 2))
             label = f"{lang} ({lvl})" if lvl else lang
@@ -224,7 +238,7 @@ def render_html(
     location_str = ", ".join(p for p in [addr.get("postal_code"), addr.get("city")] if p)
     license_str = ""
     if isinstance(license_obj, dict) and license_obj.get("default_visible"):
-        license_str = _clean_text(license_obj.get("notes_de", ""))
+        license_str = _clean_text(license_obj.get("notes", ""))
 
     ms = manual_selection or {}
     edu_manual = set(ms["education"]) if isinstance(ms.get("education"), list) else None
@@ -261,16 +275,36 @@ def render_html(
         section_key="projects",
     )
 
-    notes_raw = cv.get("meta", {}).get("notes", "")
-    projects_note = (
-        "Auswahl aus aktuellen Hochschul- & Eigenprojekten (GitHub & Audio/Video-Links oben)."
-        if "[TODO" in notes_raw
-        else _clean_text(notes_raw)
+    projects_note = _clean_text(
+        prof.get("projects_note") or cv.get("meta", {}).get("projects_note") or ""
     )
 
     media_limit = 999 if (unfiltered or is_manual) else 4
     tech_limit = 999 if (unfiltered or is_manual) else 7
     docs_limit = 999 if (unfiltered or is_manual) else 4
+
+    used_skill_names: set[str] = set()
+    skills_media = _format_skills_bucket(
+        skills,
+        ["media_ui_and_creative_tech"],
+        weights,
+        limit=media_limit,
+        used_names=used_skill_names,
+    )
+    skills_tech = _format_skills_bucket(
+        skills,
+        ["programming_languages", "linux_devops_and_tools"],
+        weights,
+        limit=tech_limit,
+        used_names=used_skill_names,
+    )
+    skills_docs = _format_skills_bucket(
+        skills,
+        ["frameworks_protocols_and_architecture"],
+        weights,
+        limit=docs_limit,
+        used_names=used_skill_names,
+    )
 
     replacements = {
         "{{NAME}}": _clean_text(personal.get("full_name", "")),
@@ -285,24 +319,16 @@ def render_html(
         "{{EXPERIENCE_HTML}}": render_table_rows(exp_items, "experience", weights),
         "{{PROJECTS_HTML}}": render_table_rows(proj_items, "projects", weights),
         "{{PROJECTS_NOTE}}": projects_note,
-        "{{SKILLS_MEDIA}}": _format_skills_bucket(
-            skills, ["media_ui_and_creative_tech"], weights, limit=media_limit
-        ),
-        "{{SKILLS_TECH}}": _format_skills_bucket(
-            skills,
-            [
-                "programming_languages",
-                "frameworks_protocols_and_architecture",
-                "linux_devops_and_tools",
-            ],
-            weights,
-            limit=tech_limit,
-        ),
-        "{{SKILLS_DOCS}}": _format_skills_bucket(
-            skills, ["frameworks_protocols_and_architecture"], weights, limit=docs_limit
-        ),
+        "{{SKILLS_MEDIA}}": skills_media,
+        "{{SKILLS_TECH}}": skills_tech,
+        "{{SKILLS_DOCS}}": skills_docs,
         "{{SKILLS_LANG}}": _format_languages(skills),
     }
+
+    out = template_str
+    for key, val in replacements.items():
+        out = out.replace(key, str(val))
+    return out
 
     out = template_str
     for key, val in replacements.items():

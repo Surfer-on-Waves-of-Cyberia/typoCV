@@ -133,15 +133,13 @@ class CvStore:
     @staticmethod
     def item_title(section: str, item: dict) -> str:
         if section == "education":
-            return item.get("degree_de") or item.get("title") or item.get("id", "")
+            return item.get("degree") or item.get("title") or item.get("id", "")
         if section == "experience":
-            return item.get("role_de") or item.get("title") or item.get("id", "")
+            return item.get("role") or item.get("title") or item.get("id", "")
         if section == "projects":
             return item.get("name") or item.get("title") or item.get("id", "")
         if section == "skills.languages":
-            lang = item.get("language_de") or item.get("name") or ""
-            lvl = item.get("level_de") or ""
-            return f"{lang} ({lvl})".strip(" ()")
+            return item.get("language") or item.get("name") or item.get("id", "")
         return item.get("name") or item.get("title") or item.get("id", "")
 
     @staticmethod
@@ -151,24 +149,23 @@ class CvStore:
         if section == "experience":
             return item.get("organization") or ""
         if section == "projects":
-            return item.get("context_de") or ", ".join(item.get("tech_stack") or [])
+            return item.get("context") or ", ".join(item.get("tech_stack") or [])
         if section.startswith("skills."):
-            return item.get("level_de") or ""
+            return item.get("level") or ""
         return ""
 
     @staticmethod
     def item_period_str(item: dict) -> str:
         p = item.get("period")
         if isinstance(p, dict):
-            return p.get("display_de") or f"{p.get('start', '')} – {p.get('end', '')}".strip(" –")
+            return p.get("display") or f"{p.get('start', '')} – {p.get('end', '')}".strip(" –")
         return str(p or "")
 
     @staticmethod
     def item_bullets_text(section: str, item: dict) -> str:
-        sub_key = "highlights_de" if section == "education" else "bullets_de"
-        subs = item.get(sub_key) or item.get("bullets") or []
+        subs = item.get("highlights") if section == "education" else item.get("bullets")
         lines = []
-        for s in subs:
+        for s in subs or []:
             if isinstance(s, dict) and s.get("text"):
                 lines.append(s["text"])
             elif isinstance(s, str) and s.strip():
@@ -189,16 +186,16 @@ class CvStore:
         if section == "education":
             new_item = {
                 "id": payload.get("id") or _slugify_id("edu", title),
-                "degree_de": title,
+                "degree": title,
                 "institution": org,
-                "location": payload.get("location", "Fulda, Deutschland"),
+                "location": payload.get("location", "Fulda, Germany"),
                 "period": {
                     "start": period_disp,
                     "end": None,
                     "is_current": False,
-                    "display_de": period_disp,
+                    "display": period_disp,
                 },
-                "highlights_de": bullets,
+                "highlights": bullets,
                 "tags": tags,
                 "priority": priority,
                 "default_visible": visible,
@@ -206,16 +203,16 @@ class CvStore:
         elif section == "experience":
             new_item = {
                 "id": payload.get("id") or _slugify_id("exp", title),
-                "role_de": title,
+                "role": title,
                 "organization": org,
-                "location": payload.get("location", "Fulda, Deutschland"),
+                "location": payload.get("location", "Fulda, Germany"),
                 "period": {
                     "start": period_disp,
                     "end": None,
                     "is_current": False,
-                    "display_de": period_disp,
+                    "display": period_disp,
                 },
-                "bullets_de": bullets,
+                "bullets": bullets,
                 "tags": tags,
                 "priority": priority,
                 "default_visible": visible,
@@ -225,30 +222,30 @@ class CvStore:
             new_item = {
                 "id": payload.get("id") or _slugify_id("proj", title),
                 "name": title,
-                "context_de": org,
+                "context": org,
                 "period": {
                     "start": period_disp,
                     "end": None,
                     "is_current": True,
-                    "display_de": period_disp,
+                    "display": period_disp,
                 },
                 "tech_stack": stack,
-                "bullets_de": bullets,
+                "bullets": bullets,
                 "tags": tags,
                 "priority": priority,
                 "default_visible": visible,
             }
         elif section == "skills.languages":
             new_item = {
-                "language_de": title,
-                "level_de": org,
+                "language": title,
+                "level": org,
                 "priority": priority,
                 "default_visible": visible,
             }
         else:
             new_item = {
                 "name": title,
-                "level_de": org,
+                "level": org,
                 "tags": tags,
                 "priority": priority,
                 "default_visible": visible,
@@ -280,34 +277,34 @@ class CvStore:
             item["tags"] = tags
 
         if section == "education":
-            item["degree_de"] = title
+            item["degree"] = title
             item["institution"] = org
             if isinstance(item.get("period"), dict):
-                item["period"]["display_de"] = period_disp
+                item["period"]["display"] = period_disp
             if "bullets" in payload:
-                item["highlights_de"] = _parse_bullets(payload["bullets"], tags, priority)
+                item["highlights"] = _parse_bullets(payload["bullets"], tags, priority)
         elif section == "experience":
-            item["role_de"] = title
+            item["role"] = title
             item["organization"] = org
             if isinstance(item.get("period"), dict):
-                item["period"]["display_de"] = period_disp
+                item["period"]["display"] = period_disp
             if "bullets" in payload:
-                item["bullets_de"] = _parse_bullets(payload["bullets"], tags, priority)
+                item["bullets"] = _parse_bullets(payload["bullets"], tags, priority)
         elif section == "projects":
             item["name"] = title
-            item["context_de"] = org
+            item["context"] = org
             if isinstance(item.get("period"), dict):
-                item["period"]["display_de"] = period_disp
+                item["period"]["display"] = period_disp
             if "stack" in payload:
                 item["tech_stack"] = [x.strip() for x in payload["stack"].split(",") if x.strip()]
             if "bullets" in payload:
-                item["bullets_de"] = _parse_bullets(payload["bullets"], tags, priority)
+                item["bullets"] = _parse_bullets(payload["bullets"], tags, priority)
         elif section == "skills.languages":
-            item["language_de"] = title
-            item["level_de"] = org
+            item["language"] = title
+            item["level"] = org
         else:
             item["name"] = title
-            item["level_de"] = org
+            item["level"] = org
 
         return item
 
@@ -524,7 +521,7 @@ class TkGuiAdapter(UIAdapter):
         form.columnconfigure(1, weight=1)
         add_row("Заголовок / Роль / Назва:", ttk.Entry(form, textvariable=v_title), 0)
         add_row("Організація / Рівень / Контекст:", ttk.Entry(form, textvariable=v_org), 1)
-        add_row("Період (display_de):", ttk.Entry(form, textvariable=v_period), 2)
+        add_row("Період (display):", ttk.Entry(form, textvariable=v_period), 2)
         add_row("Tech stack (через кому):", ttk.Entry(form, textvariable=v_stack), 3)
         add_row("Теги:", ttk.Entry(form, textvariable=v_tags), 4)
         add_row("Priority (1–3):", ttk.Spinbox(form, from_=1, to=3, textvariable=v_prio, width=6), 5)
@@ -596,6 +593,29 @@ class TkGuiAdapter(UIAdapter):
             else:
                 selected_idx = None
 
+        def load_item_to_form(idx: int | None) -> None:
+            nonlocal selected_idx
+            if idx is None:
+                selected_idx = None
+                return
+            col = self.store.get_collection(current_section.get())
+            if not (0 <= idx < len(col)):
+                selected_idx = None
+                return
+            selected_idx = idx
+            item = col[idx]
+            sec = current_section.get()
+
+            v_title.set(self.store.item_title(sec, item))
+            v_org.set(self.store.item_org_or_meta(sec, item))
+            v_period.set(self.store.item_period_str(item))
+            v_stack.set(", ".join(item.get("tech_stack") or []))
+            v_tags.set(", ".join(item.get("tags") or []))
+            v_prio.set(int(item.get("priority", 2)))
+            v_vis.set(bool(item.get("default_visible", True)))
+            txt_bullets.delete("1.0", tk.END)
+            txt_bullets.insert("1.0", self.store.item_bullets_text(sec, item))
+
         def toggle_selected() -> None:
             sel = listbox.curselection()
             idx = sel[0] if sel else selected_idx
@@ -632,29 +652,6 @@ class TkGuiAdapter(UIAdapter):
             v_vis.set(True)
             txt_bullets.delete("1.0", tk.END)
 
-        def on_select(_event=None) -> None:
-            nonlocal selected_idx
-            sel = listbox.curselection()
-            if not sel:
-                return
-            idx = sel[0]
-            col = self.store.get_collection(current_section.get())
-            if idx >= len(col):
-                return
-            selected_idx = idx
-            item = col[idx]
-            sec = current_section.get()
-
-            v_title.set(self.store.item_title(sec, item))
-            v_org.set(self.store.item_org_or_meta(sec, item))
-            v_period.set(self.store.item_period_str(item))
-            v_stack.set(", ".join(item.get("tech_stack") or []))
-            v_tags.set(", ".join(item.get("tags") or []))
-            v_prio.set(int(item.get("priority", 2)))
-            v_vis.set(bool(item.get("default_visible", True)))
-            txt_bullets.delete("1.0", tk.END)
-            txt_bullets.insert("1.0", self.store.item_bullets_text(sec, item))
-
         def collect_payload() -> dict:
             return {
                 "title": v_title.get(),
@@ -667,6 +664,12 @@ class TkGuiAdapter(UIAdapter):
                 "bullets": txt_bullets.get("1.0", tk.END),
             }
 
+        def on_select(_event=None) -> None:
+            sel = listbox.curselection()
+            if not sel:
+                return
+            load_item_to_form(sel[0])
+
         def save_current() -> None:
             payload = collect_payload()
             if not payload["title"].strip():
@@ -675,10 +678,13 @@ class TkGuiAdapter(UIAdapter):
             sec = current_section.get()
             if selected_idx is None:
                 self.store.add_item(sec, payload)
-                refresh_list()
+                new_idx = len(self.store.get_collection(sec)) - 1
+                refresh_list(preserve_idx=new_idx)
+                load_item_to_form(new_idx)
             else:
                 self.store.update_item(sec, selected_idx, payload)
                 refresh_list(preserve_idx=selected_idx)
+                load_item_to_form(selected_idx)
             messagebox.showinfo("Готово", "Зміни застосовано в пам'яті. Натисни 'Записати JSON'.")
 
         def delete_current() -> None:
